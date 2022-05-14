@@ -62,41 +62,54 @@ export async function ObsidianRouter<T>({
   policy = 'allkeys-lru',
   maxmemory = '2000mb',
   maxQueryDepth = 0,
+  // useQueryCache: option to store entire query
   useQueryCache = true,
   useRebuildCache = true,
   customIdentifier = ["id", "__typename"],
 }: ObsidianRouterOptions<T>): Promise<T> {
   redisPortExport = redisPort;
   const router = new Router();
+  // create the schema by combining typeDefs and resovlers
   const schema = makeExecutableSchema({ typeDefs, resolvers });
   // const cache = new LFUCache(50); // If using LFU Browser Caching, uncomment line
+  // get the caching object
   const cache = new Cache(); // If using Redis caching, uncomment line
   cache.cacheClear();
   if (policy || maxmemory) { // set redis configurations
     cache.configSet('maxmemory-policy', policy);
     cache.configSet('maxmemory', maxmemory);
   }
-
+  // set up oak router middleware to handle post requests to /graphql
   await router.post(path, async (ctx: any) => {
+    // log the time since the window context was created (time since app started running)
     const t0 = performance.now();
+    // desctructure context
     const { response, request } = ctx;
     if (!request.hasBody) return;
     try {
+      // context is an optional function passed into the router to act on the Oak context object
+      // run context function
       const contextResult = context ? await context(ctx) : undefined;
+      // get the body object of the request
       let body = await request.body().value;
+      // check the query depth for dos security
       if (maxQueryDepth) queryDepthLimiter(body.query, maxQueryDepth); // If a securty limit is set for maxQueryDepth, invoke queryDepthLimiter, which throws error if query depth exceeds maximum
       body = { query: restructure(body) }; // Restructre gets rid of variables and fragments from the query
+      // get the query's value (i.e. the response which would be generated if the query were sent) from the cach, if it exists
       let cacheQueryValue = await cache.read(body.query)
-      // Is query in cache? 
+      // if the data was found in the cache and the option to store the entire query is set
       if (useCache && useQueryCache && cacheQueryValue) {
+        // retrieve original query response by unhashing the cache value
         let detransformedCacheQueryValue = await detransformResponse(body.query, cacheQueryValue)
         if (!detransformedCacheQueryValue) {
           // cache was evicted if any partial cache is missing, which causes detransformResponse to return undefined
           cacheQueryValue = undefined;
         } else {
+          // attach appropriate response body
           response.status = 200;
           response.body = detransformedCacheQueryValue;
           const t1 = performance.now();
+          // log performance - opportunity here to store performance for analysis
           console.log(
             '%c Obsidian retrieved data from cache and took ' +
             (t1 - t0) +
