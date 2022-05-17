@@ -119,6 +119,7 @@ export async function ObsidianRouter<T>({
 
       };      // If not in cache: 
       if (useCache && useQueryCache && !cacheQueryValue) {
+        // make the graphQL query request and store the response
         const gqlResponse = await (graphql as any)(
           schema,
           body.query,
@@ -127,7 +128,9 @@ export async function ObsidianRouter<T>({
           body.variables || undefined,
           body.operationName || undefined
         );
+        // normalize the response
         const normalizedGQLResponse = normalizeObject(gqlResponse, customIdentifier);
+        
         if (isMutation(body)) {
           const queryString = await request.body().value;
           invalidateCache(normalizedGQLResponse, queryString.query);
