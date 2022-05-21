@@ -2,6 +2,9 @@ import { graphql } from 'https://cdn.pika.dev/graphql@15.0.0';
 import { renderPlaygroundPage } from 'https://deno.land/x/oak_graphql@0.6.2/graphql-playground-html/render-playground-html.ts';
 import { makeExecutableSchema } from 'https://deno.land/x/oak_graphql@0.6.2/graphql-tools/schema/makeExecutableSchema.ts';
 import { Cache } from './quickCache.js';
+// FLAG: Cache should be passed into ObsidianRouter as an object
+  // you have an issue where you need a specific .env configuration, like
+  // the one shown in quickCache.js
 import queryDepthLimiter from './DoSSecurity.ts';
 import { restructure } from './restructure.ts';
 import { rebuildFromQuery } from './rebuild.js'
@@ -73,7 +76,7 @@ export async function ObsidianRouter<T>({
   const schema = makeExecutableSchema({ typeDefs, resolvers });
   // const cache = new LFUCache(50); // If using LFU Browser Caching, uncomment line
   // get the caching object 
-  // the construction of the cache object should be conditional 
+  // FLAG: the construction of the cache object should be conditional 
     // if there is no redis set up, you would get an exception here
   const cache = new Cache(); // If using Redis caching, uncomment line
   cache.cacheClear();

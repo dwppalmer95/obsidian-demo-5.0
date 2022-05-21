@@ -12,6 +12,10 @@ if (context === "server") {
   redis = await connect({
     hostname: Deno.env.get("REDIS_HOST"),
     port: 6379,
+    // FLAG: this port is used in multiple locations. This should be a global
+      // variable (also, Cache object should be constructed by the server code
+      // implementing Obsidian router) - DWP
+    // OR we pass the .env key that reachs the redis host into the Obsidian router
   });
 }
 //this is being exported so we can flush db in invalidateCacheCheck
