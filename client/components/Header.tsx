@@ -1,5 +1,6 @@
 import { React } from '../../deps.ts';
 
+
 declare global {
 	namespace JSX {
 		interface IntrinsicElements {
@@ -21,6 +22,11 @@ declare global {
 	}
 }
 
+/**
+ * @introduction This is introduction
+ *
+ * @description This is description\n this sentences will show next row
+ */
 export const Header = (props: any) => {
 	return (
 		<header className='bg-success py-5'>

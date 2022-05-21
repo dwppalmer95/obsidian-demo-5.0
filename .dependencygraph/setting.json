@@ -1,0 +1,16 @@
+{
+  "entryFilePath": "/client/app.tsx",
+  "alias": {
+    "@": "./client"
+  },
+  "resolveExtensions": [
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx",
+    ".gif",
+    ".html",
+    ".css",
+    ".scss"
+  ]
+}

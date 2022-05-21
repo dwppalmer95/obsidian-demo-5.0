@@ -72,7 +72,9 @@ export async function ObsidianRouter<T>({
   // create the schema by combining typeDefs and resovlers
   const schema = makeExecutableSchema({ typeDefs, resolvers });
   // const cache = new LFUCache(50); // If using LFU Browser Caching, uncomment line
-  // get the caching object
+  // get the caching object 
+  // the construction of the cache object should be conditional 
+    // if there is no redis set up, you would get an exception here
   const cache = new Cache(); // If using Redis caching, uncomment line
   cache.cacheClear();
   if (policy || maxmemory) { // set redis configurations
@@ -81,7 +83,7 @@ export async function ObsidianRouter<T>({
   }
   // set up oak router middleware to handle post requests to /graphql
   await router.post(path, async (ctx: any) => {
-    // log the time since the window context was created (time since app started running)
+    // set the time since the window context was created (time since app started running)
     const t0 = performance.now();
     // desctructure context
     const { response, request } = ctx;

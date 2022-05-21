@@ -1,6 +1,7 @@
 /** @format */
 
 import { gql } from "https://deno.land/x/oak_graphql/mod.ts";
+// THIS LIBRARY IS UNMAINTAINED - DWP 20220519
 
 import { redisdb } from "./quickCache.js";
 import { Cache } from './quickCache.js';
