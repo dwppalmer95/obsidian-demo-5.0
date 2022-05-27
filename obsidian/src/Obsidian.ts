@@ -142,6 +142,7 @@ export async function ObsidianRouter<T>({
         }
         // If read query: run query, normalize GQL response, transform GQL response, write to cache, and write pieces of normalized GQL response objects
         else {
+          // FLAG: see comments in transformResponse
           const transformedGQLResponse = transformResponse(gqlResponse, customIdentifier);
           await cache.write(body.query, transformedGQLResponse, false);
           for (const key in normalizedGQLResponse) {

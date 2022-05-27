@@ -23,6 +23,8 @@ const isArrayOfHashableObjects = (arrayOfObjects: Array<GenericObject>, hashable
 * @param {array} hashableKeys Array of hashable keys
 * @return {GenericObject} Nested object representing an object of references, where the references are hashes in Redis
 */
+// FLAG - transformResponse returns an empty object if the responseObject doesn't contain the hashableKeys. 
+  // this creates a silent failure. This should be throwing an excpetion and handling the error somehow
 export const transformResponse = (responseObject: any, hashableKeys: Array<string>):GenericObject => {
   const result: GenericObject = {};
 
